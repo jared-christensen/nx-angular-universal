@@ -10,14 +10,19 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/apps/my-app",
+            "outputPath": "dist/apps/my-app/browser",
             "index": "apps/my-app/src/index.html",
             "main": "apps/my-app/src/main.ts",
             "polyfills": "apps/my-app/src/polyfills.ts",
             "tsConfig": "apps/my-app/tsconfig.app.json",
             "aot": true,
-            "assets": ["apps/my-app/src/favicon.ico", "apps/my-app/src/assets"],
-            "styles": ["apps/my-app/src/styles.css"],
+            "assets": [
+              "apps/my-app/src/favicon.ico",
+              "apps/my-app/src/assets"
+            ],
+            "styles": [
+              "apps/my-app/src/styles.css"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -78,10 +83,59 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/my-app"],
+          "outputs": [
+            "coverage/apps/my-app"
+          ],
           "options": {
             "jestConfig": "apps/my-app/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/my-app/server",
+            "main": "apps/my-app/server.ts",
+            "tsConfig": "apps/my-app/tsconfig.server.json"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "apps/my-app/src/environments/environment.ts",
+                  "with": "apps/my-app/src/environments/environment.prod.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            }
+          }
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "options": {
+            "browserTarget": "my-app:build",
+            "serverTarget": "my-app:server"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "my-app:build:production",
+              "serverTarget": "my-app:server:production"
+            }
+          }
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "browserTarget": "my-app:build:production",
+            "serverTarget": "my-app:server:production",
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {}
           }
         }
       }
@@ -107,14 +161,17 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/my-app-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": [
+              "apps/my-app-e2e/**/*.{js,ts}"
+            ]
           }
         }
       }
     }
   },
   "cli": {
-    "defaultCollection": "@nrwl/angular"
+    "defaultCollection": "@nrwl/angular",
+    "analytics": false
   },
   "schematics": {
     "@nrwl/angular": {
